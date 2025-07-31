@@ -1,27 +1,26 @@
 using System;
+using System.Runtime.InteropServices;
+using eCommerce.Models;
 using eCommerce.Models.Entities;
 using eCommerce.Services.Interfaces;
+using MapsterMapper;
 
 namespace eCommerce.Services;
 
-public class ProductService : IProductService
+public class ProductService(AppDbContext dbContext, IMapper mapper) : IProductService
 {
-    public List<Product> List = new List<Product>()
-    {
-        new Product(){
-            ProductId = 1,
-            Name = "Laptop",
-            Price = 999
-        },
-        new Product(){
-            ProductId = 2,
-            Name = "Monitor",
-            Price = 999
-        }
-    };
 
-    public List<Product> GetList()
+    private readonly AppDbContext _dbContext = dbContext;
+    private readonly IMapper _mapper = mapper;
+
+
+    public List<ProductResponse> GetList()
     {
-        return List;
+        var list = dbContext.Products.ToList();
+
+        var result = new List<ProductResponse>();
+
+        result = _mapper.Map(list, result);
+        return result;
     }
 }

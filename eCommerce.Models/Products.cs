@@ -1,8 +1,8 @@
 using System;
 
-namespace eCommerce.Models.Entities;
+namespace eCommerce.Models;
 
-public class Product
+public class ProductResponse
 {
     public int ProductId { get; set; }
     public string Name { get; set; }
