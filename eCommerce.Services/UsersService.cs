@@ -6,28 +6,66 @@ using System.Text;
 using eCommerce.Models;
 using eCommerce.Models.Entities;
 using eCommerce.Models.Requests;
+using eCommerce.Models.SearchObjects;
 using eCommerce.Services.Interfaces;
 using MapsterMapper;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
+using System.Linq.Dynamic;
+using System.Linq.Dynamic.Core;
 
 namespace eCommerce.Services;
 
-public class UsersService(AppDbContext dbContext, IMapper mapper) : IUsersService
+public class UsersService(AppDbContext dbContext, IMapper mapper) : BaseService<UserResponse, UsersSearchObject, User>(dbContext, mapper), IUsersService
 {
-    private readonly AppDbContext _dbContext = dbContext;
-    private readonly IMapper _mapper = mapper;
-    public List<UserResponse> GetList()
+    public override IQueryable<User> AddFilter(UsersSearchObject search, IQueryable<User> query)
     {
-        List<UserResponse> result = new List<UserResponse>();
+        var filteredQuery = base.AddFilter(search, query);
 
-        var list = _dbContext.Users.ToList();
+        if (!string.IsNullOrEmpty(search.FirstNameGTE))
+        {
+            filteredQuery = filteredQuery.Where(x => x.FirstName.StartsWith(search.FirstNameGTE.Trim()));
+        }
 
-        result = _mapper.Map(list, result);
+        if (!string.IsNullOrEmpty(search.LastNameGTE))
+        {
+            filteredQuery = filteredQuery.Where(x => x.LastName.StartsWith(search.LastNameGTE.Trim()));
+        }
 
-        return result;
+        if (!string.IsNullOrEmpty(search.Email))
+        {
+            filteredQuery = filteredQuery.Where(x => x.Email == search.Email.Trim());
+        }
+
+        if (!string.IsNullOrEmpty(search.Username))
+        {
+            filteredQuery = filteredQuery.Where(x => x.Username == search.Username.Trim());
+        }
+
+        if (search.IsUserRolesIncluded)
+        {
+            filteredQuery = filteredQuery.Include(x => x.UserRoles).ThenInclude(x => x.Role);
+        }
+
+        if (!string.IsNullOrEmpty(search.OrderBy))
+        {
+            try
+            {
+                filteredQuery = filteredQuery.OrderBy(search.OrderBy);
+            }
+            catch (System.Exception ex)
+            {
+
+                Console.WriteLine(ex);
+            }
+        }
+
+        return filteredQuery;
+
     }
 
-    public UserResponse Insert(UserInsertRequest request)
+
+    public UserResponse Insert(UsersInsertRequest request)
     {
         if (request.Password != request.PasswordConfirmation)
         {
@@ -69,7 +107,7 @@ public class UsersService(AppDbContext dbContext, IMapper mapper) : IUsersServic
         return Convert.ToBase64String(inArray);
     }
 
-    public UserResponse Update(int id, UserUpdateRequest request)
+    public UserResponse Update(int id, UsersUpdateRequest request)
     {
         var entity = _dbContext.Users.Find(id);
 
@@ -90,4 +128,6 @@ public class UsersService(AppDbContext dbContext, IMapper mapper) : IUsersServic
 
         return _mapper.Map<UserResponse>(entity);
     }
+
+
 }

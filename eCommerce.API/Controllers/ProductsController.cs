@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using eCommerce.Models;
 using eCommerce.Models.Entities;
+using eCommerce.Models.SearchObjects;
 using eCommerce.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,13 +12,9 @@ namespace eCommerce.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class ProductsController(IProductService productService) : ControllerBase
+    public class ProductsController : BaseController<ProductResponse, ProductsSearchObject>
     {
-        private readonly IProductService _productService = productService;
-        [HttpGet]
-        public List<ProductResponse> GetList()
-        {
-            return _productService.GetList();
-        }
+        public ProductsController(IProductsService service) : base(service) { }
+
     }
 }

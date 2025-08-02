@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace eCommerce.Models.Requests;
 
-public class UserUpdateRequest
+public class UsersUpdateRequest
 {
     [Required, MaxLength(50)]
     public string FirstName { get; set; } = string.Empty;

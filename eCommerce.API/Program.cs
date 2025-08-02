@@ -14,8 +14,9 @@ builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddTransient<IProductService, ProductService>();
+builder.Services.AddTransient<IProductsService, ProductsService>();
 builder.Services.AddTransient<IUsersService, UsersService>();
+builder.Services.AddTransient<IProductTypesService, ProductTypesService>();
 
 builder.Services.AddMapster();
 
@@ -38,7 +39,7 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-    
+
 }
 
 

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace eCommerce.Models.Requests;
 
-public class UserInsertRequest
+public class UsersInsertRequest
 {
     [Required, MaxLength(50)]
     public string FirstName { get; set; } = string.Empty;

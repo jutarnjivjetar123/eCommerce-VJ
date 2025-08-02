@@ -17,4 +17,5 @@ public class UserResponse
 
     public bool? Status { get; set; } = true;
 
+    public virtual ICollection<UserRolesResponse> UserRoles { get; set; } = new List<UserRolesResponse>();
 }

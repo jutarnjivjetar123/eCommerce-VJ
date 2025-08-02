@@ -1,5 +1,6 @@
 using eCommerce.Models;
 using eCommerce.Models.Requests;
+using eCommerce.Models.SearchObjects;
 using eCommerce.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -8,26 +9,21 @@ namespace eCommerce.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UsersController(IUsersService usersService) : ControllerBase
+    public class UsersController(IUsersService service) : BaseController<UserResponse, UsersSearchObject>(service)
     {
 
-        private readonly IUsersService _usersService = usersService;
-        [HttpGet]
-        public List<UserResponse> GetList()
-        {
-            return _usersService.GetList();
-        }
+
 
         [HttpPost]
-        public UserResponse Insert(UserInsertRequest request)
+        public UserResponse Insert(UsersInsertRequest request)
         {
-            return _usersService.Insert(request);
+            return service.Insert(request);
         }
 
         [HttpPut("{id}")]
-        public UserResponse Update([FromRoute] int id, [FromBody] UserUpdateRequest request)
+        public UserResponse Update([FromRoute] int id, [FromBody] UsersUpdateRequest request)
         {
-            return _usersService.Update(id, request);
+            return service.Update(id, request);
         }
     }
 }
